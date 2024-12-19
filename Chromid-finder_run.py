@@ -7,12 +7,12 @@ from multiprocessing import Pool
 from Bio import SeqIO
 
 # 定义脚本路径
-SCRIPT_0 = "scripts/0.py"
-SCRIPT_1 = "scripts/1.py"
-SCRIPT_2 = "scripts/2.py"
-SCRIPT_3 = "scripts/3.py"
-SCRIPT_4 = "scripts/4.py"
-SCRIPT_5 = "scripts/5.py"
+SCRIPT_0 = "scripts/part0.py"
+SCRIPT_1 = "scripts/part1.py"
+SCRIPT_2 = "scripts/part2.py"
+SCRIPT_3 = "scripts/part3.py"
+SCRIPT_4 = "scripts/part4.py"
+SCRIPT_5 = "scripts/part5.py"
 
 # 生成gc.tsv文件
 def generate_gc_file(input_file):
