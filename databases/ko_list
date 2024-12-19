@@ -1,0 +1,3 @@
+knum	threshold	score_type	profile_type	F-measure	nseq	nseq_used	alen	mlen	eff_nseq	re/pos	definition
+K02313	127.57	full	all	0.997560	8182	6572	5834	544	6.41	0.590	chromosomal replication initiator protein
+K10763	171.63	domain	trim	0.993805	2141	1541	698	288	4.22	0.590	DnaA-homolog protein
