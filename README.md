@@ -10,9 +10,11 @@ Python Dependencies: BioPython, Pandas,ProcessPoolExecutor,Math,multiprocessing
 Please input a single FASTA file containing multiple sequences, ensuring that each sequence is relatively complete, and avoid situations where a sequence is composed of multiple fragments such as xx. bin1, xx.bin2.
 
 Quick Start
+
 Download all Chromid-Finder related files and place them in the same directory. Also, place the input file and Chromid-finder_run.py in the same directory.
 
 Command
+
 python Chromid-finder_run.py -i input.fasta -o output.txt -n 2 -d 1.6
 -i:Input FASTA file
 -o:output file
