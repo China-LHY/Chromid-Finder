@@ -28,32 +28,32 @@ def run_command(command):
 def is_large_file(file_path, size_limit=5 * 1024**3):
     return os.path.getsize(file_path) > size_limit
 
-# 调用0.py
+# 调用part0.py
 def run_script_0(input_file, cpu):
     command = f"python {SCRIPT_0} {input_file} {cpu}"
     run_command(command)
 
-# 调用1.py
+# 调用part1.py
 def run_script_1(input_file):
     command = f"python {SCRIPT_1} {input_file}"
     run_command(command)
 
-# 调用2.py
+# 调用part2.py
 def run_script_2():
     command = f"python {SCRIPT_2} "
     run_command(command)
 
-# 调用3.py
+# 调用part3.py
 def run_script_3(input_file, cpu):
     command = f"python {SCRIPT_3} {input_file} {cpu}"
     run_command(command)
 
-# 调用4.py
+# 调用part4.py
 def run_script_4():
     command = f"python {SCRIPT_4} "
     run_command(command)
 
-# 调用5.py
+# 调用part5.py
 def run_script_5(output_file, cpu, dt):
     command = f"python {SCRIPT_5} {output_file} {cpu} {dt}"
     run_command(command)
@@ -77,19 +77,19 @@ def clean_up_files(output_file, input_file):
             shutil.rmtree(item_path)
             print(f"Deleted directory and its contents: {item_path}")
 
-# 处理大文件的1.py并行运行
+# 处理大文件的part1.py并行运行
 def process_large_file(input_file, cpu, output_file, dt):
-    # 首先运行0.py
+    # 首先运行part0.py
     run_script_0(input_file, cpu)
     
-    # 获取0.py的输出文件
+    # 获取part0.py的输出文件
     gpartfiles = glob.glob("g_part*.fasta")
     print(f"gpartfiles: {gpartfiles}")
-    # 使用多进程并行调用1.py
+    # 使用多进程并行调用part1.py
     with Pool(cpu) as pool:
         pool.map(run_script_1, gpartfiles)
     
-    # 合并1.py的输出文件
+    # 合并part1.py的输出文件
     with open("part1.txt", "w") as part1:
         for file in glob.glob("g_part*-part1.txt"):
             with open(file, "r") as f:
@@ -104,10 +104,10 @@ def process_large_file(input_file, cpu, output_file, dt):
 
 # 处理小文件的顺序运行
 def process_small_file(input_file, cpu, output_file, dt):
-    # 直接调用1.py并重命名输出
+    # 直接调用part1.py并重命名输出
     run_script_1(input_file)
 
-    # 获取1.py的输出文件，假设输出文件的格式为 "{input_file}-part1.txt"
+    # 获取part1.py的输出文件，假设输出文件的格式为 "{input_file}-part1.txt"
     output_1_file = f"{input_file}-part1.txt"
     
     # 检查文件是否存在
