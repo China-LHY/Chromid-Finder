@@ -27,9 +27,18 @@ python Chromid-finder_run.py -i input.fasta -o output.txt -n 2 -d 1.6
 
 -d: Tetranucleotide relative abundance
 
+Testing Chromid-Finder
+-
+The Chromid-Finder can be tested using the test file (NCBI RefSeq assembly： GCF_001315015.1) we uploaded with the following command：
+python Chromid-finder_run.py -i test.fna -o output.txt -n 2 -d 1.6
+
+In the output.txt file of the output, NZ_CP012914.1 should be recognized as bacterial chromosomes, NZ_CP012915.1, and NZ_CP012917.1 as chromid
+
 # Output Explanations
 The output results are presented in the form of clusters, where each cluster represents a possible bacterial genome, and clusters are separated by '-----'.
 
 Possible bacterial chromosome: refers to the chromosome of a bacterium that may carry a chromid
 
 Possible bacterial chromids: refer to the chromids associated with this chromosome
+
+
