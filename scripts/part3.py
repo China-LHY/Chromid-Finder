@@ -1,6 +1,8 @@
 import sys
+import os
 from Bio import SeqIO
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor
+import gzip
 
 # 计算四联体频率
 def calculate_tetranucleotide_frequencies(sequence):
@@ -41,60 +43,62 @@ def process_record(record):
     tetranuc_freqs = calculate_tetranucleotide_frequencies(sequence)
     return seq_id, tetranuc_freqs
 
-# 处理多个记录
-def process_file_chunk(records, cpu):
-    results = []
-    with ProcessPoolExecutor(max_workers=cpu) as executor:
-        futures = [executor.submit(process_record, record) for record in records]
-        for future in as_completed(futures):
-            try:
-                results.append(future.result())
-            except Exception as e:
-                print(f"处理记录时出错: {e}")
-    return results
+# 处理记录块（避免嵌套池）
+def process_chunk(chunk):
+    return [process_record(record) for record in chunk]
 
-# 写入结果到文件
-def write_results_to_file(results, out_file):
-    with open(out_file, "w") as outfile:
-        for seq_id, tetranuc_freqs in results:
-            outfile.write(f"{seq_id}\t{tetranuc_freqs}\n")
-
-# 主函数
-def main(input_file, out_file, cpu):
-    batch_size = 5000
-    chunks = []
-
-    # 读取文件并分块
-    with open(input_file) as handle:
-        records = []
+# 流式分块读取器
+def stream_fasta_chunks(input_file, chunk_size=100):
+    """流式读取FASTA文件，按内存大小分块"""
+    chunk = []
+    current_size = 0
+    max_chunk_size = 1000 * 1024 * 1024  # 100MB/块
+    
+    open_func = gzip.open if input_file.endswith('.gz') else open
+    with open_func(input_file, 'rt') as handle:
         for record in SeqIO.parse(handle, "fasta"):
-            records.append(record)
-            if len(records) >= batch_size:
-                chunks.append(records)
-                records = []
-        if records:
-            chunks.append(records)
+            rec_size = len(record.seq) + len(record.id) + 100  # 预估内存
+            if current_size + rec_size > max_chunk_size and chunk:
+                yield chunk
+                chunk = []
+                current_size = 0
+                
+            chunk.append(record)
+            current_size += rec_size
+    
+    if chunk:
+        yield chunk
 
-    # 处理分块并合并结果
-    results = []
-    with ProcessPoolExecutor(max_workers=cpu) as executor:
-        futures = [executor.submit(process_file_chunk, chunk, cpu) for chunk in chunks]
-        for future in as_completed(futures):
-            try:
-                results.extend(future.result())
-            except Exception as e:
-                print(f"处理分块时出错: {e}")
+# 主函数（完全重写）
+def main(input_file, out_file, cpu):
+    
+    # 立即打开输出文件（流式写入）
+    with open(out_file, 'w') as out_f:
+        # 创建进程池（单层）
+        with ProcessPoolExecutor(max_workers=cpu) as executor:
+            # 流式分块提交任务
+            futures = []
+            for chunk in stream_fasta_chunks(input_file):
+                future = executor.submit(process_chunk, chunk)
+                futures.append(future)
+                
+                # 及时回收完成的任务
+                while len(futures) >= cpu * 2:  # 控制排队任务数
+                    done = [f for f in futures if f.done()]
+                    for f in done:
+                        for seq_id, freqs in f.result():
+                            out_f.write(f"{seq_id}\t{freqs}\n")
+                        futures.remove(f)
+            
+            # 处理剩余任务
+            for future in futures:
+                for seq_id, freqs in future.result():
+                    out_f.write(f"{seq_id}\t{freqs}\n")
 
-    # 写入处理结果
-    write_results_to_file(results, out_file)
-
-# 主程序入口
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("用法: python process_fasta.py <input_file> <cpu>")
+    if len(sys.argv) != 4:  # 修改参数数量
+        print("用法: python part3.py <input_file> <output_file> <cpu>")
         sys.exit(1)
-
-    input_file = sys.argv[1]
-    cpu = int(sys.argv[2])
-    out_file = "part3.txt"
+        
+    input_file, out_file, cpu = sys.argv[1], sys.argv[2], int(sys.argv[3])
     main(input_file, out_file, cpu)
