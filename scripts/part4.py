@@ -95,7 +95,7 @@ def cluster_sequences(gc_file, intput_file, part4_file):
             f.write("------\n")
     print(f"Clustered data written to {part4_file}")
 
-def main(gc_file, intput_file, part4_file):
+def main(gc_file, intput_file, part4_file, cpu):
     cluster_sequences(gc_file, intput_file, part4_file)
 
 if __name__ == "__main__":
