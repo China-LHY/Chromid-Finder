@@ -45,7 +45,7 @@ def run_script_2():
 
 # 调用part3.py
 def run_script_3(input_file, cpu):
-    command = f"python {SCRIPT_3} {input_file} {cpu}"
+    command = f"python {SCRIPT_3} {input_file} part3.txt {cpu}"
     run_command(command)
 
 # 调用part4.py
