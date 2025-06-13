@@ -54,15 +54,19 @@ def main(input_file):
     # Define commands
     commands = [
         f"prodigal -i {input_file} -a {input_file}.faa -p meta",
+
         f"hmmsearch -Z 1 --noali --domE 1e-5 --cpu 2 --domtblout {input_file}-core1.out databases/core1.hmm {input_file}.faa",
         f"hmmsearch -Z 1 --noali --domE 1e-5 --cpu 2 --domtblout {input_file}-core2.out databases/core2.hmm {input_file}.faa",
         f"cat {input_file}-core1.out {input_file}-core2.out > merged_{input_file}-core.out",
+
         f"hmmsearch -Z 1 --noali --domE 1e-5 --cpu 2 --domtblout {input_file}-par1.out databases/par1.hmm {input_file}.faa",
         f"hmmsearch -Z 1 --noali --domE 1e-5 --cpu 2 --domtblout {input_file}-par2.out databases/par2.hmm {input_file}.faa",
         f"cat {input_file}-par1.out {input_file}-par2.out > merged_{input_file}-par.out",
+
         f"hmmsearch -Z 1 --noali --domE 1e-5 --cpu 2 --domtblout {input_file}-rep1.out databases/rep1.hmm {input_file}.faa",
-        f"hmmsearch -Z 1 --noali --domE 1e-5 --cpu 2 --domtblout {input_file}-rep2.out databases/rep2.hmm {input_file}.faa",
+        f"hmmsearch  -Z 1 --noali --domE 1e-5 --cpu 2 --domtblout {input_file}-rep2.out databases/rep2.hmm {input_file}.faa",
         f"cat {input_file}-rep1.out {input_file}-rep2.out > merged_{input_file}-rep.out",
+
         f"exec_annotation -o {input_file}-dnaA.tsv -p databases/dnaa.hal -k databases/ko_list --cpu 2 -f detail {input_file}.faa"
     ]
 
