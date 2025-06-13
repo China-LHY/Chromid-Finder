@@ -41,4 +41,8 @@ Possible bacterial chromosome: refers to the chromosome of a bacterium that may 
 
 Possible bacterial chromids: refer to the chromids associated with this chromosome
 
+Note
+-
+When processing larger files, the kofamscan tool called by script part1.py may occasionally fail to execute correctly in parallel. If results appear inaccurate or errors occur, please verify the generated Dnaa.tsv file.
+
 
